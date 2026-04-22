@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Dev Diary - 2D Fighting Game Project</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #000000;
+            --secondary: #333333;
+            --dark: #ffffff;
+            --darker: #fafafa;
+            --light: #000000;
+            --accent: #000000;
+            --border: #dddddd;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--darker);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Background effect */
+        body::before {
+            display: none;
+        }
+
+        /* Header */
+        header {
+            padding: 4rem 2rem;
+            text-align: center;
+            border-bottom: 2px solid var(--border);
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            font-family: 'Space Mono', monospace;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+        }
+
+        .student-info {
+            font-size: 0.95rem;
+            color: #000000;
+            font-family: 'Space Mono', monospace;
+            letter-spacing: 0.5px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-size: 0.95rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+            border-color: var(--primary);
+            background: #f0f0f0;
+        }
+
+        nav a.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--darker);
+        }
+
+        /* Main content */
+        main {
+            margin: 3rem 0 5rem 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .week-entry {
+            margin-bottom: 4rem;
+            padding: 2.5rem;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            animation: slideIn 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .week-entry:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .week-entry:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .week-entry:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .week-entry:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .week-entry:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .week-entry:hover {
+            border-color: var(--primary);
+            background: #ffffff;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+        }
+
+        .week-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .week-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: 'Space Mono', monospace;
+            min-width: 70px;
+        }
+
+        .week-entry h2 {
+            font-size: 1.8rem;
+            margin: 1.5rem 0 1rem 0;
+            color: var(--secondary);
+        }
+
+        .week-entry h3 {
+            font-size: 1.2rem;
+            margin: 1.5rem 0 0.8rem 0;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .week-entry p {
+            margin-bottom: 1rem;
+            color: var(--secondary);
+            line-height: 1.8;
+        }
+
+        .week-entry ul {
+            margin: 1rem 0 1rem 1.5rem;
+            color: var(--secondary);
+        }
+
+        .week-entry li {
+            margin-bottom: 0.7rem;
+            line-height: 1.7;
+        }
+
+        .week-entry ol {
+            margin: 1rem 0 1rem 1.5rem;
+            color: var(--secondary);
+        }
+
+        .week-entry ol li {
+            margin-bottom: 0.7rem;
+            line-height: 1.7;
+        }
+
+        .blockquote {
+            margin: 1.5rem 0;
+            padding: 1rem 1.5rem;
+            border-left: 4px solid var(--primary);
+            background: #f9f9f9;
+            border-radius: 4px;
+            color: #555;
+            font-style: italic;
+        }
+
+        a {
+            color: var(--secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            border-bottom: 1px dotted var(--secondary);
+        }
+
+        a:hover {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            border-top: 2px solid var(--border);
+            margin-top: 5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-text {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .week-entry {
+                padding: 1.5rem;
+            }
+
+            .week-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .week-number {
+                font-size: 2rem;
+            }
+
+            .week-entry h2 {
+                font-size: 1.4rem;
+            }
+
+            nav {
+                gap: 1rem;
+            }
+
+            nav a {
+                font-size: 0.85rem;
+                padding: 0.4rem 0.8rem;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--darker);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <h1>GAME DEV DIARY</h1>
+            <p class="subtitle">2D Fighting Game Development - Clash of Elements</p>
+            <p class="student-info">By Hisham Hassan Nawaz (25149474)</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <nav>
+            
+            <a href="#github" class="nav-link">Github Repo</a>
+            <a href="#itchio" class="nav-link">Play Game</a>
+            <a href="#marketingvideo" class="nav-link">Marketing Video</a>
+            <a href="#pitchdocument" class="nav-link">Pitch Document</a>
+            <a href="#week3" class="nav-link active">Week 3</a>
+            <a href="#week4" class="nav-link">Week 4</a>
+            <a href="#week5" class="nav-link">Week 5</a>
+            <a href="#week6" class="nav-link">Week 6</a>
+            <a href="#week7" class="nav-link">Week 7</a>
+            <a href="#week8" class="nav-link">Week 8 and Week 9</a>
+            <a href="#week11" class="nav-link">Week 11 and Week 12</a>
+        </nav>
+
+        <main>
+             <section class="week-entry" id="github">
+                <div class="week-header">
+                    <div class="week-number">Github Repo</div>
+                </div>
+                <a href="https://github.com/Hisham-007-debug/clashofelementsgameprojectUL" target="_blank" style="display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--primary); color: var(--darker); border-radius: 4px; border: none; font-weight: 600;">Visit GitHub Repository</a>
+            </section>
+            <section class="week-entry" id="itchio">
+                <div class="week-header">
+                    <div class="week-number">Play Game</div>
+                </div>
+                <a href="https://aarong5678.itch.io/clash-of-elements" target="_blank" style="display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--primary); color: var(--darker); border-radius: 4px; border: none; font-weight: 600;">Play on itch.io</a>
+            </section>
+            <section class="week-entry" id="marketingvideo">
+                <div class="week-header">
+                    <div class="week-number">Marketing Video</div>
+                </div>
+                <a href="https://ulcampus-my.sharepoint.com/:v:/g/personal/25149474_studentmail_ul_ie/IQCr7BTFx2m0RavYoDaiBUBdAf51C0ugmS0s1VfPiQaViG8?e=Tbe0cj" target="_blank" style="display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--primary); color: var(--darker); border-radius: 4px; border: none; font-weight: 600;">Watch Marketing Video</a>
+            </section>
+            <section class="week-entry" id="documents">
+                <div class="week-header">
+                    <div class="week-number">Documents</div>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
+                    <a href=" https://ulcampus-my.sharepoint.com/:w:/g/personal/25149474_studentmail_ul_ie/IQCjpqH_eTtHQKpz4oP3OhGUAbmYZ6bS-D7Tw16qOzhrzGo?e=A1TY7c" target="_blank" style="display: inline-block; padding: 0.75rem 1.5rem; background: var(--primary); color: var(--darker); border-radius: 4px; border: none; font-weight: 600;">Pitch Document</a>
+                    <a href="https://ulcampus-my.sharepoint.com/:w:/g/personal/25468456_studentmail_ul_ie/IQBTZNxBN_3LTKTDatJ-OwdqAXPDuHhMg7_IqnuTWBP4BxY?e=u6aPXr" target="_blank" style="display: inline-block; padding: 0.75rem 1.5rem; background: var(--primary); color: var(--darker); border-radius: 4px; border: none; font-weight: 600;">Game Design Document</a>
+                </div>
+            </section>
+            <!-- Week 3 -->
+            <section class="week-entry" id="week3">
+                <div class="week-header">
+                    <div class="week-number">Week 3</div>
+                    <div>
+                        <h2>The Big Idea</h2>
+                    </div>
+                </div>
+
+                <h3>The Team Meeting</h3>
+                <p>Our team of 7 met up to figure out what kind of game we actually wanted to make. After some back and
+                    forth, we all agreed on a 2D fighting game. We want it to feel and play a bit like
+                    Street Fighter 3.
+                </p>
+
+                <h3>Finding Our Way</h3>
+                <p>We weren't sure which game engine to use or what art should look like. To get some professional
+                    advice, we went to the game modeling lab and talked to Professor Gavin. He gave us
+                    two really helpful tips:</p>
+                <ul>
+                    <li>Use Unity: He said it's very beginner-friendly for a team like ours.</li>
+                    <li>Use Pixel Art: This ensures the game runs smoothly on everyone's laptops
+                        without lagging.</li>
+                </ul>
+            </section>
+
+            <!-- Week 4 -->
+            <section class="week-entry" id="week4">
+                <div class="week-header">
+                    <div class="week-number">Week 4</div>
+                    <div>
+                        <h2>Planning and Roles</h2>
+                    </div>
+                </div>
+
+                <h3>Setting the Theme</h3>
+                <p>We had two meetings this week. In the first one, we brainstormed the story and characters. We decided
+                    to have 4 playable characters based on elements: Fire, Ice, Earth, and Air. We also planned to have
+                    4 different arenas (stages) that match those elements. We
+                    also grew our team to 8 members now that Annie has joined us.</p>
+
+                <h3>Assigning Jobs</h3>
+                <p>In our second meeting, our producer Aaron gave everyone a specific role so we could
+                    start working:</p>
+                <ul>
+                    <li>Programmers: Me, Aaron, and Niketa.</li>
+                    <li>Artists: Annie and two others are handling the characters and backgrounds.</li>
+                    <li>UI/GUI: Shayan designs the menus and health bars.</li>
+                    <li>Sound: James is making the music and elemental sound effects.</li>
+                </ul>
+                <p>Aaron then created a discord server in which he invited all of us to join. This was a great way to
+                    keep in touch and share our progress. He as well created seperate channels for programming and
+                    artists so it was easier to manage and not to confuse everyone. </p>
+                <img src="discordbruh.png" alt="Discord">
+            </section>
+
+            <!-- Week 5 -->
+            <section class="week-entry" id="week5">
+                <div class="week-header">
+                    <div class="week-number">Week 5</div>
+                    <div>
+                        <h2>Learning the Engine</h2>
+                    </div>
+                </div>
+
+                <h3>Independent Work</h3>
+                <p>We didn't have a formal meeting this week because Aaron gave us all homework. The artists started
+                    sketching the characters, and my job was to learn Unity and figure out how to get
+                    art into the game. I found many helpful YouTube tutorials:</p>
+                <ul>
+                    <li><a href="https://youtu.be/Sg_w8hIbp4Y?si=pBctqIO5dNbzM3O7" target="_blank">Unity Sprite
+                            Animation Tutorial</a></li>
+                    <li><a href="https://youtu.be/FXXc0hTWIMs?si=wfEz-NeoXmqBqcsC" target="_blank">2D Character Movement
+                            in Unity</a></li>
+                </ul>
+                <p>These tutorials taught me how to import sprites from a sprite sheet made from Aseprite or
+                    LibreSprite, then add them into Unity.</p>
+
+                <h3>The Learning Curve</h3>
+                <p>I downloaded a free "Fire Warrior" character from <em>itch.io</em> to practice with. I spent a lot of
+                    time watching YouTube tutorials to figure out the technical side. It was a bit tricky at first but
+                    then I learned how to:</p>
+
+                <ol>
+                    <li>Splice the sprite sheet: Cutting one big image into separate animation frames.
+                        <p>Splicing is built into Unity, it is actually seamless, all you have to
+                            do is click sprite editor then you add sprite component to the game object, and it will
+                            automatically splice it for you.</p>
+                    </li>
+
+                    <li>The Animator: Setting up the logic, so the game knows when to switch from
+                        "walking" to "attacking".
+                        <p>The splicing helps with the animator, because splicing separates each
+                            frame for the animation. So for walking and attacking, there were frames made, I had to drag
+                            these frames to create the animation clip in Unity.</p>
+                    </li>
+
+                    <li>Coding: I used C# to make the character move when you press a key. Since I
+                        already know Java from my other classes, the coding part wasn't too hard—C# is
+                        actually pretty similar.
+                        <p>From the tutorials, I learnt the Legacy Unity Input System, basically
+                            hard coding all the movements for the characters. The system knows by default the key
+                            bindings for controller and keyboard/mouse, so you must manually just add the control you
+                            need to the if statement.</p>
+                    </li>
+                </ol>
+                <video width="100%" controls style="margin: 1.5rem 0; border-radius: 8px;">
+                    <source src="firewarriordemonstration.mp4" type="video/mp4">
+                    Your browser doesn't support HTML5 video.
+                </video>
+            </section>
+
+            <!-- Week 6 -->
+            <section class="week-entry" id="week6">
+                <div class="week-header">
+                    <div class="week-number">Week 6</div>
+                    <div>
+                        <h2>Learning Something Horrible</h2>
+                    </div>
+                </div>
+                <p>Since the game we are making requires local multiplayer—obviously it needs it, it's a fighting
+                    game—two players with two controllers should select their element characters, select the arena, and
+                    battle it out. However, this is apparently impossible in Legacy Unity Input System, since it is more
+                    difficult to implement local multiplayer.</p>
+
+                <p>Unity actually created the new input system for this exact reason, so I searched up tutorials on the
+                    new input system and got to work.</p>
+
+                <h3>Learning the New Input System with Aaron</h3>
+                <p>Aaron, Shayyan, James and I had a meeting for the games project. Aaron and I worked on the new input
+                    system. We learnt it's actually easier than the legacy version, because Unity does all the hard
+                    coding for us. We basically just have to code in the velocity speed for the movement speed for the
+                    characters. Currently we have only draft versoins of the Air element and Earth element characters
+                    not final versions of the
+                    animations. So, we worked on their movement and attacks.</p>
+            </section>
+            <!-- Week 7 -->
+            <section class="week-entry" id="week7">
+                <div class="week-header">
+                    <div class="week-number">Week 7</div>
+                    <div>
+                        <h2>The Final animations of Air and Earth/h2>
+                    </div>
+                </div>
+                <p>
+                    Annie and Darragh sent on discord the final animations and look of the Air and Earth characters.
+                    They
+                    were amazing, they were exactly what I had in mind. They both created the characters using Apserite
+                    and LibreSprite. Then Aaron and I got to work on importing them into Unity and making sure they
+                    worked
+                    properly. From what I learned before through youtube tutorials, it was effortlessly easy. Then with
+                    Aaron we worked on the movement, health and actions scripts for both characters. We used the same
+                    scripts from the onces we used with the older version of the characters, but we had to tweak a few
+                    lines of codes and add extra booleon variables and animations events to the unity animator. This was
+                    due to Annie and Darragh cooking an absoulte beautfiul animations.
+                </p>
+                <img src="Screenshot 2026-04-20 195607.png" alt="Air and Earth Character Screenshots" style="width: 100%; margin: 1.5rem 0; border-radius: 8px;">
+                <img src="Screenshot 2026-04-20 195645.png" alt="Air and Earth Character Screenshots" style="width: 100%; margin: 1.5rem 0; border-radius: 8px;">  
+                <img src="Screenshot 2026-04-20 195701.png" alt="Air and Earth Character Screenshots" style="width: 100%; margin: 1.5rem 0; border-radius: 8px;">
+            </section>
+            <!-- Week 8 -->
+            <section class="week-entry" id="week8">
+                <div class="week-header">
+                    <div class="week-number">Week 8 and Week 9</div>
+                    <div>
+                        <h2>Terrible Tragedy right before the Presentation</h2>
+                    </div>
+                </div>
+                <p>
+
+                    Aaron our producer informed to us that we needed to have a 5 minute presentation on Monday Week
+                    8. He emphasied that is was cruical it was 5 minutes. I got straight to work by creating the
+                    powerpoint and sharing the link with our team on Discord. I created a template for us to use, I put
+                    in the introduction slides, the animation slides and music slides. I as well put in the slides for
+                    the game mechanics, the controls, and the arenas building. This was the base template and then all
+                    of us then edited the slides and added what they all acomplished.
+                    Aaron worked on creating the scene and arena of the game using the characters Air and Earth.
+                    On Monday morning, we had a meeting few hours before the lecture to present, we all made the sure
+                    the presentation was ready and the game was good enough for a demo. It was working properly, the
+                    animations of Air and Earth were a bit janky but still functional.
+                </p>
+                <p>
+                    I unfortunately had a problem with the unity where the entire scene that Aaron created was deleted,
+                    and it accidently was pushed into the github repo. While Aaron was trying to fix a input problem
+                    where my ps5 controller was not registering properly to either the air or earth character. Aaron
+                    eventualy fixed this and we all rejoiced in happiness, but that happiness went away as soon as Aaron
+                    pulled the repo of the broken scenes from mine. And then the fixed version was gone, our entre game
+                    was deleted 5 minutes before the presentation
+                </p>
+                <p>
+                    Aaron and I were about to cry, and then Aaron did a sin where he asked ChatGpt how to fix this
+                    insane problem. It told us that we were able to download a old commit versin of the repo from the
+                    github website. So Aaron immeditalty did that and 1 minute before the presentation we had our demo.
+                </p>
+            </section>
+            <!-- Week 11 -->
+            <section class="week-entry" id="week11">
+                <div class="week-header">
+                    <div class="week-number">Week 11 and Week 12</div>
+                    <div>
+                        <h2>Bringing the Fire Character to Life</h2>
+                    </div>
+                </div>
+
+                
+                <p>Me, Aaron, and Shayan all worked together during these two weeks to push the game forward. We split up the work and each tackled different parts of the project.</p>
+
+                <h3>Adding the Fire Character</h3>
+                <p>Darragh made the Fire character animations and I got the job of importing them into Unity with all of their assets. Once I had everything in, I grabbed the player scripts that we had already made for the Air character and gave them a try with the Fire character. To our surprise, they worked perfectly right away! This made us realize something really cool: we could probably use the same script for all the characters. That's going to save us a ton of time going forward.</p>
+
+                <h3>Fixing Menus and Character Selection</h3>
+                <p>Shayan was busy improving the menus to make them actually work properly. He also added scripts to let players choose their characters and pick which arena they wanted to fight in before jumping into the fight scene. His work made the whole flow of the game feel much smoother.</p>
+
+                <h3>Crushing Bugs and Building Systems</h3>
+                <p>Aaron had a lot on his plate. There were tons of bugs that needed fixing, mostly because of issues with GitHub that kept messing up our code. He spent most of his time hunting down and squashing those bugs so the game would run cleanly. On top of that, Aaron also built out the text and rounds system for when the game finishes. We're doing best of 3 rounds, so he set that all up so players would see the round count and know when the match was over.</p>
+
+                <p>By the end of these two weeks, we had a much more complete game. The Fire character was in, the menus worked, and the whole experience felt way more polished. We were really happy with how everything came together.</p>
+
+                <video width="100%" controls style="margin: 1.5rem 0; border-radius: 8px;">
+                    <source src="AdvertismentofClashofElements.mp4" type="video/mp4">
+                    Your browser doesn't support HTML5 video.
+                </video>
+                <video width="100%" controls style="margin: 1.5rem 0; border-radius: 8px;">
+                    <source src="Desktop 2026.04.21 - 23.35.45.06.mp4" type="video/mp4">
+                    Your browser doesn't support HTML5 video.
+                </video>
+            </section>
+        </main>
+    </div>
+
+    <footer>
+        <p class="footer-text">Game Design Module Development Diary</p>
+        <p class="footer-text">Building a 2D Fighting Game with Unity • Semester Project</p>
+    </footer>
+
+    <script>
+        // Smooth scroll for navigation
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                // Only prevent default for internal links (starting with #)
+                if (href.startsWith('#')) {
+                    e.preventDefault();
+                    document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+                    this.classList.add('active');
+                    const target = document.querySelector(href);
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Update active nav on scroll
+        window.addEventListener('scroll', () => {
+            let current = '';
+            document.querySelectorAll('section').forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('nav a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
